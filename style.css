@@ -1,0 +1,530 @@
+/* ==========================================================================
+   Reset & base
+   ========================================================================== */
+
+:root {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: #000;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+  color: #e6e6e6;
+}
+
+a {
+  color: #e6e6e6;
+  text-decoration: none;
+}
+
+/* ==========================================================================
+   Page layout
+   Content is vertically centered as a column; main's own min-height keeps
+   the balance of empty space consistent above/below regardless of content.
+   ========================================================================== */
+
+main {
+  width: 100%;
+  padding: 3vh 1.5rem 8vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+/* ==========================================================================
+   "hello" heading
+   Each letter is its own span so it can scale and hue-cycle independently
+   on hover, like a mini spotlight following the cursor letter by letter.
+   ========================================================================== */
+
+.hello {
+  margin: 0;
+  text-align: center;
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(3.2rem, 11vw, 6.5rem);
+  text-shadow: 0 0 0.6em rgba(255, 255, 255, 0.35);
+}
+
+.hello span {
+  display: inline-block;
+  transition: transform 0.25s ease, text-shadow 0.25s ease, color 0.25s ease;
+}
+
+.hello span:hover {
+  transform: scale(1.5) translateY(-0.05em);
+  animation: hue-cycle 1.8s linear infinite;
+}
+
+@keyframes hue-cycle {
+  0% {
+    color: #6ec6ff;
+    text-shadow: 0 0 0.9em #6ec6ff;
+  }
+  25% {
+    color: #b18cff;
+    text-shadow: 0 0 0.9em #b18cff;
+  }
+  50% {
+    color: #ff8cd9;
+    text-shadow: 0 0 0.9em #ff8cd9;
+  }
+  75% {
+    color: #ffb066;
+    text-shadow: 0 0 0.9em #ffb066;
+  }
+  100% {
+    color: #6ec6ff;
+    text-shadow: 0 0 0.9em #6ec6ff;
+  }
+}
+
+/* ==========================================================================
+   Tagline ("need a dev?")
+   ========================================================================== */
+
+.tagline {
+  margin: 0.25rem 0 0;
+  text-align: center;
+  font-style: italic;
+  font-size: clamp(1.25rem, 3.5vw, 1.6rem);
+  color: #e6e6e6;
+}
+
+/* ==========================================================================
+   Contact buttons
+   Layered effects, back to front: base pill -> ::before (hover-triggered
+   gradient fill, fades in after a 5s hover delay) -> ::after (click-triggered
+   gradient fill that sweeps in from the edges) -> text on top. Both pseudo
+   elements sit at z-index:-1, which only stays behind the button's own
+   background because .btn establishes its own stacking context via
+   `position: relative` + `z-index: 0` (position alone isn't enough).
+   ========================================================================== */
+
+.links {
+  margin: 2.5rem 0 0;
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  font-size: clamp(1.35rem, 4vw, 1.85rem);
+}
+
+.btn {
+  position: relative;
+  z-index: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-weight: 600;
+  font-style: italic;
+  padding: 0.6em 1.4em;
+  border-radius: 999px;
+  border: 1px solid rgba(140, 170, 255, 0.25);
+  background: rgba(110, 140, 255, 0.06);
+  box-shadow: 0 0 0.4em rgba(110, 140, 255, 0.08);
+  color: #e6e6e6;
+  /* Transparent placeholder shadows so the hover outline can transition
+     smoothly instead of popping in (same number/type of shadow layers). */
+  text-shadow: -1px -1px 0 rgba(0, 0, 0, 0), 1px -1px 0 rgba(0, 0, 0, 0),
+    -1px 1px 0 rgba(0, 0, 0, 0), 1px 1px 0 rgba(0, 0, 0, 0),
+    0 0 0 rgba(255, 255, 255, 0);
+  transition: transform 0.2s ease, background 0.25s ease,
+    border-color 0.25s ease, box-shadow 0.25s ease, color 0.4s ease,
+    text-shadow 0.4s ease;
+}
+
+/* Hover-triggered gradient fill (delayed appearance) */
+.btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background-image: linear-gradient(
+    135deg,
+    #6ec6ff,
+    #b18cff,
+    #ff8cd9,
+    #ffb066,
+    #6ec6ff
+  );
+  background-size: 300% 300%;
+  opacity: 0;
+  /* Fast, undelayed fade-out by default; the hover rule below overrides
+     this with a slow, delayed fade-in only while actively hovered. */
+  transition: opacity 0.5s ease;
+}
+
+.btn:hover,
+.btn:focus-visible,
+.btn:active {
+  animation: btn-border-cycle 2.4s linear infinite;
+  color: #fff;
+  text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.7), 1px -1px 0 rgba(0, 0, 0, 0.7),
+    -1px 1px 0 rgba(0, 0, 0, 0.7), 1px 1px 0 rgba(0, 0, 0, 0.7),
+    0 0 0.6em rgba(255, 255, 255, 0.4);
+  transition: transform 0.2s ease, background 0.25s ease,
+    border-color 0.25s ease, box-shadow 0.25s ease, color 1.2s ease 5s,
+    text-shadow 1.2s ease 5s;
+}
+
+.btn:hover::before,
+.btn:focus-visible::before,
+.btn:active::before {
+  opacity: 1;
+  transition: opacity 1.8s ease 5s;
+  animation: btn-full-cycle 2.4s linear infinite 5s;
+}
+
+.btn:hover,
+.btn:focus-visible {
+  transform: translateY(-0.1em) scale(1.04);
+}
+
+.btn:active {
+  transform: translateY(0) scale(0.97);
+}
+
+/* Click-triggered gradient fill (edge-to-center sweep) */
+.btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background-image: linear-gradient(
+    135deg,
+    #6ec6ff,
+    #b18cff,
+    #ff8cd9,
+    #ffb066,
+    #6ec6ff
+  );
+  background-size: 300% 300%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Border glow for the click moment only: scoped to :not(:hover):not(:active)
+   and given a finite duration so it settles back to normal once the click
+   effect ends, instead of looping forever just because focus lingers on
+   the link after a click. */
+.btn:focus:not(:hover):not(:active) {
+  animation: btn-border-cycle 0.25s linear;
+}
+
+.btn:focus::after {
+  animation: btn-click-fill 0.25s ease-out, btn-full-cycle 2.4s linear infinite;
+}
+
+@keyframes btn-border-cycle {
+  0% {
+    border-color: #6ec6ff;
+    box-shadow: 0 0 0.8em rgba(110, 198, 255, 0.45);
+  }
+  25% {
+    border-color: #b18cff;
+    box-shadow: 0 0 0.8em rgba(177, 140, 255, 0.45);
+  }
+  50% {
+    border-color: #ff8cd9;
+    box-shadow: 0 0 0.8em rgba(255, 140, 217, 0.45);
+  }
+  75% {
+    border-color: #ffb066;
+    box-shadow: 0 0 0.8em rgba(255, 176, 102, 0.45);
+  }
+  100% {
+    border-color: #6ec6ff;
+    box-shadow: 0 0 0.8em rgba(110, 198, 255, 0.45);
+  }
+}
+
+@keyframes btn-full-cycle {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 300% 50%;
+  }
+}
+
+/* Edge-to-center fill: a radial mask's transparent "hole" shrinks from
+   100% (nothing visible) to 0% (fully filled), then holds and fades out.
+   Stepped in dense 2%-of-timeline increments rather than a couple of
+   keyframes because browsers don't smoothly interpolate between two
+   differing radial-gradient() values in a single animation step - each
+   keyframe is a discrete jump, so more of them reads as continuous motion. */
+@keyframes btn-click-fill {
+  0% {
+    opacity: 1;
+    -webkit-mask-image: radial-gradient(ellipse farthest-corner at center, transparent 100%, black 100%);
+    mask-image: radial-gradient(ellipse farthest-corner at center, transparent 100%, black 100%);
+  }
+  2% {
+    opacity: 1;
+    -webkit-mask-image: radial-gradient(ellipse farthest-corner at center, transparent 97.14%, black 99.14%);
+    mask-image: radial-gradient(ellipse farthest-corner at center, transparent 97.14%, black 99.14%);
+  }
+  4% {
+    opacity: 1;
+    -webkit-mask-image: radial-gradient(ellipse farthest-corner at center, transparent 94.29%, black 96.29%);
+    mask-image: radial-gradient(ellipse farthest-corner at center, transparent 94.29%, black 96.29%);
+  }
+  6% {
+    opacity: 1;
+    -webkit-mask-image: radial-gradient(ellipse farthest-corner at center, transparent 91.43%, black 93.43%);
+    mask-image: radial-gradient(ellipse farthest-corner at center, transparent 91.43%, black 93.43%);
+  }
+  8% {
+    opacity: 1;
+    -webkit-mask-image: radial-gradient(ellipse farthest-corner at center, transparent 88.57%, black 90.57%);
+    mask-image: radial-gradient(ellipse farthest-corner at center, transparent 88.57%, black 90.57%);
+  }
+  10% {
+    opacity: 1;
+    -webkit-mask-image: radial-gradient(ellipse farthest-corner at center, transparent 85.71%, black 87.71%);
+    mask-image: radial-gradient(ellipse farthest-corner at center, transparent 85.71%, black 87.71%);
+  }
+  12% {
+    opacity: 1;
+    -webkit-mask-image: radial-gradient(ellipse farthest-corner at center, transparent 82.86%, black 84.86%);
+    mask-image: radial-gradient(ellipse farthest-corner at center, transparent 82.86%, black 84.86%);
+  }
+  14% {
+    opacity: 1;
+    -webkit-mask-image: radial-gradient(ellipse farthest-corner at center, transparent 80%, black 82%);
+    mask-image: radial-gradient(ellipse farthest-corner at center, transparent 80%, black 82%);
+  }
+  16% {
+    opacity: 1;
+    -webkit-mask-image: radial-gradient(ellipse farthest-corner at center, transparent 77.14%, black 79.14%);
+    mask-image: radial-gradient(ellipse farthest-corner at center, transparent 77.14%, black 79.14%);
+  }
+  18% {
+    opacity: 1;
+    -webkit-mask-image: radial-gradient(ellipse farthest-corner at center, transparent 74.29%, black 76.29%);
+    mask-image: radial-gradient(ellipse farthest-corner at center, transparent 74.29%, black 76.29%);
+  }
+  20% {
+    opacity: 1;
+    -webkit-mask-image: radial-gradient(ellipse farthest-corner at center, transparent 71.43%, black 73.43%);
+    mask-image: radial-gradient(ellipse farthest-corner at center, transparent 71.43%, black 73.43%);
+  }
+  22% {
+    opacity: 1;
+    -webkit-mask-image: radial-gradient(ellipse farthest-corner at center, transparent 68.57%, black 70.57%);
+    mask-image: radial-gradient(ellipse farthest-corner at center, transparent 68.57%, black 70.57%);
+  }
+  24% {
+    opacity: 1;
+    -webkit-mask-image: radial-gradient(ellipse farthest-corner at center, transparent 65.71%, black 67.71%);
+    mask-image: radial-gradient(ellipse farthest-corner at center, transparent 65.71%, black 67.71%);
+  }
+  26% {
+    opacity: 1;
+    -webkit-mask-image: radial-gradient(ellipse farthest-corner at center, transparent 62.86%, black 64.86%);
+    mask-image: radial-gradient(ellipse farthest-corner at center, transparent 62.86%, black 64.86%);
+  }
+  28% {
+    opacity: 1;
+    -webkit-mask-image: radial-gradient(ellipse farthest-corner at center, transparent 60%, black 62%);
+    mask-image: radial-gradient(ellipse farthest-corner at center, transparent 60%, black 62%);
+  }
+  30% {
+    opacity: 1;
+    -webkit-mask-image: radial-gradient(ellipse farthest-corner at center, transparent 57.14%, black 59.14%);
+    mask-image: radial-gradient(ellipse farthest-corner at center, transparent 57.14%, black 59.14%);
+  }
+  32% {
+    opacity: 1;
+    -webkit-mask-image: radial-gradient(ellipse farthest-corner at center, transparent 54.29%, black 56.29%);
+    mask-image: radial-gradient(ellipse farthest-corner at center, transparent 54.29%, black 56.29%);
+  }
+  34% {
+    opacity: 1;
+    -webkit-mask-image: radial-gradient(ellipse farthest-corner at center, transparent 51.43%, black 53.43%);
+    mask-image: radial-gradient(ellipse farthest-corner at center, transparent 51.43%, black 53.43%);
+  }
+  36% {
+    opacity: 1;
+    -webkit-mask-image: radial-gradient(ellipse farthest-corner at center, transparent 48.57%, black 50.57%);
+    mask-image: radial-gradient(ellipse farthest-corner at center, transparent 48.57%, black 50.57%);
+  }
+  38% {
+    opacity: 1;
+    -webkit-mask-image: radial-gradient(ellipse farthest-corner at center, transparent 45.71%, black 47.71%);
+    mask-image: radial-gradient(ellipse farthest-corner at center, transparent 45.71%, black 47.71%);
+  }
+  40% {
+    opacity: 1;
+    -webkit-mask-image: radial-gradient(ellipse farthest-corner at center, transparent 42.86%, black 44.86%);
+    mask-image: radial-gradient(ellipse farthest-corner at center, transparent 42.86%, black 44.86%);
+  }
+  42% {
+    opacity: 1;
+    -webkit-mask-image: radial-gradient(ellipse farthest-corner at center, transparent 40%, black 42%);
+    mask-image: radial-gradient(ellipse farthest-corner at center, transparent 40%, black 42%);
+  }
+  44% {
+    opacity: 1;
+    -webkit-mask-image: radial-gradient(ellipse farthest-corner at center, transparent 37.14%, black 39.14%);
+    mask-image: radial-gradient(ellipse farthest-corner at center, transparent 37.14%, black 39.14%);
+  }
+  46% {
+    opacity: 1;
+    -webkit-mask-image: radial-gradient(ellipse farthest-corner at center, transparent 34.29%, black 36.29%);
+    mask-image: radial-gradient(ellipse farthest-corner at center, transparent 34.29%, black 36.29%);
+  }
+  48% {
+    opacity: 1;
+    -webkit-mask-image: radial-gradient(ellipse farthest-corner at center, transparent 31.43%, black 33.43%);
+    mask-image: radial-gradient(ellipse farthest-corner at center, transparent 31.43%, black 33.43%);
+  }
+  50% {
+    opacity: 1;
+    -webkit-mask-image: radial-gradient(ellipse farthest-corner at center, transparent 28.57%, black 30.57%);
+    mask-image: radial-gradient(ellipse farthest-corner at center, transparent 28.57%, black 30.57%);
+  }
+  52% {
+    opacity: 1;
+    -webkit-mask-image: radial-gradient(ellipse farthest-corner at center, transparent 25.71%, black 27.71%);
+    mask-image: radial-gradient(ellipse farthest-corner at center, transparent 25.71%, black 27.71%);
+  }
+  54% {
+    opacity: 1;
+    -webkit-mask-image: radial-gradient(ellipse farthest-corner at center, transparent 22.86%, black 24.86%);
+    mask-image: radial-gradient(ellipse farthest-corner at center, transparent 22.86%, black 24.86%);
+  }
+  56% {
+    opacity: 1;
+    -webkit-mask-image: radial-gradient(ellipse farthest-corner at center, transparent 20%, black 22%);
+    mask-image: radial-gradient(ellipse farthest-corner at center, transparent 20%, black 22%);
+  }
+  58% {
+    opacity: 1;
+    -webkit-mask-image: radial-gradient(ellipse farthest-corner at center, transparent 17.14%, black 19.14%);
+    mask-image: radial-gradient(ellipse farthest-corner at center, transparent 17.14%, black 19.14%);
+  }
+  60% {
+    opacity: 1;
+    -webkit-mask-image: radial-gradient(ellipse farthest-corner at center, transparent 14.29%, black 16.29%);
+    mask-image: radial-gradient(ellipse farthest-corner at center, transparent 14.29%, black 16.29%);
+  }
+  62% {
+    opacity: 1;
+    -webkit-mask-image: radial-gradient(ellipse farthest-corner at center, transparent 11.43%, black 13.43%);
+    mask-image: radial-gradient(ellipse farthest-corner at center, transparent 11.43%, black 13.43%);
+  }
+  64% {
+    opacity: 1;
+    -webkit-mask-image: radial-gradient(ellipse farthest-corner at center, transparent 8.57%, black 10.57%);
+    mask-image: radial-gradient(ellipse farthest-corner at center, transparent 8.57%, black 10.57%);
+  }
+  66% {
+    opacity: 1;
+    -webkit-mask-image: radial-gradient(ellipse farthest-corner at center, transparent 5.71%, black 7.71%);
+    mask-image: radial-gradient(ellipse farthest-corner at center, transparent 5.71%, black 7.71%);
+  }
+  68% {
+    opacity: 1;
+    -webkit-mask-image: radial-gradient(ellipse farthest-corner at center, transparent 2.86%, black 4.86%);
+    mask-image: radial-gradient(ellipse farthest-corner at center, transparent 2.86%, black 4.86%);
+  }
+  70% {
+    opacity: 1;
+    -webkit-mask-image: radial-gradient(ellipse farthest-corner at center, transparent 0%, black 2%);
+    mask-image: radial-gradient(ellipse farthest-corner at center, transparent 0%, black 2%);
+  }
+  85% {
+    opacity: 1;
+    -webkit-mask-image: radial-gradient(ellipse farthest-corner at center, transparent 0%, black 1%);
+    mask-image: radial-gradient(ellipse farthest-corner at center, transparent 0%, black 1%);
+  }
+  100% {
+    opacity: 0;
+    -webkit-mask-image: radial-gradient(ellipse farthest-corner at center, transparent 0%, black 1%);
+    mask-image: radial-gradient(ellipse farthest-corner at center, transparent 0%, black 1%);
+  }
+}
+
+/* ==========================================================================
+   Entrance fade-ins
+   "hello" -> tagline -> buttons, staggered slightly so they appear in
+   reading order rather than all at once.
+   ========================================================================== */
+
+.fade-in-1,
+.fade-in-2,
+.fade-in-3 {
+  opacity: 0;
+  animation: fade-in 1s ease forwards;
+}
+
+.fade-in-1 {
+  animation-delay: 1s;
+}
+
+.fade-in-2 {
+  animation-delay: 1.2s;
+}
+
+.fade-in-3 {
+  animation-delay: 1.45s;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 640px) {
+  .hello {
+    font-size: clamp(3.6rem, 16vw, 6.5rem);
+  }
+
+  .tagline {
+    font-size: clamp(1.4rem, 5.5vw, 1.6rem);
+  }
+
+  .links {
+    font-size: clamp(1.5rem, 6.5vw, 1.85rem);
+  }
+}
+
+/* ==========================================================================
+   Accessibility
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-in-1,
+  .fade-in-2,
+  .fade-in-3 {
+    animation: none;
+    opacity: 1;
+  }
+}
