@@ -465,6 +465,65 @@ main {
 }
 
 /* ==========================================================================
+   Mouse trail (CSS only)
+   A fixed grid of invisible cells sits behind the page. A cell lights up
+   instantly on :hover (no transition) and fades out slowly when the pointer
+   leaves (the base transition), which leaves a trail. <main> ignores the
+   pointer so the cursor reaches the grid; only the interactive bits opt
+   back in. Cells are sized in vw, with the square nearly filling its cell
+   so only a thin gap shows between neighbours. Touch screens have no
+   hover-drag, so there a tap lights a square (browsers hold :hover after a
+   tap) and it fades when you tap elsewhere; cells are larger on phones.
+   ========================================================================== */
+
+.trail {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(3vw, 1fr));
+  align-content: start;
+  overflow: hidden;
+}
+
+main {
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.hello span,
+.btn {
+  pointer-events: auto;
+}
+
+.trail i {
+  position: relative;
+  aspect-ratio: 1;
+}
+
+.trail i::after {
+  content: "";
+  position: absolute;
+  inset: 3%;
+  background: var(--c, #6ec6ff);
+  box-shadow: 0 0 0.5em var(--c, #6ec6ff);
+  opacity: 0;
+  transition: opacity 1s ease-out;
+}
+
+.trail i:hover::after {
+  opacity: 0.85;
+  transition: none;
+}
+
+.trail i:nth-child(5n + 1) { --c: #6ec6ff; }
+.trail i:nth-child(5n + 2) { --c: #b18cff; }
+.trail i:nth-child(5n + 3) { --c: #ff8cd9; }
+.trail i:nth-child(5n + 4) { --c: #ffb066; }
+.trail i:nth-child(7n + 3) { --c: #7affc8; }
+
+/* ==========================================================================
    Entrance fade-ins
    "hello" -> tagline -> buttons, staggered slightly so they appear in
    reading order rather than all at once.
@@ -503,6 +562,10 @@ main {
    ========================================================================== */
 
 @media (max-width: 640px) {
+  .trail {
+    grid-template-columns: repeat(auto-fill, minmax(8vw, 1fr));
+  }
+
   .hello {
     font-size: clamp(3.6rem, 16vw, 6.5rem);
   }
@@ -521,6 +584,10 @@ main {
    ========================================================================== */
 
 @media (prefers-reduced-motion: reduce) {
+  .trail {
+    display: none;
+  }
+
   .fade-in-1,
   .fade-in-2,
   .fade-in-3 {
